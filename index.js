@@ -35,6 +35,8 @@ const serviceCollection = client
 const reviewCollection = client.db("monikasTherapy").collection("reviews");
 
 // api end point
+// Default Route
+
 app.get("/", async (req, res) => {
   try {
     res.send({
@@ -46,6 +48,7 @@ app.get("/", async (req, res) => {
   }
 });
 
+// only homepage to show 3 data by limit()
 app.get("/homeService", async (req, res) => {
   try {
     const cursor = serviceCollection.find({}).limit(3);
@@ -61,6 +64,7 @@ app.get("/homeService", async (req, res) => {
   }
 });
 
+// get service all data
 app.get("/services", async (req, res) => {
   try {
     const cursor = serviceCollection.find({});
@@ -76,6 +80,24 @@ app.get("/services", async (req, res) => {
   }
 });
 
+// create a service
+app.post("/services", async (req, res) => {
+  try {
+    const service = req.body;
+    const services = await serviceCollection.insertOne(service);
+    if (services.acknowledged) {
+      res.send({
+        success: true,
+        message: "Successfully created data!",
+        data: services,
+      });
+    }
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
+
+// get specific service
 app.get("/services/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -91,6 +113,7 @@ app.get("/services/:id", async (req, res) => {
   }
 });
 
+//get all reviews
 app.post("/reviews", async (req, res) => {
   try {
     const review = req.body;
@@ -127,6 +150,7 @@ app.get("/reviews", async (req, res) => {
   }
 });
 
+// get my review
 app.get("/myReviews", async (req, res) => {
   try {
     let query = {};
@@ -146,7 +170,7 @@ app.get("/myReviews", async (req, res) => {
     console.log(error.name.bgRed, error.message.bold);
   }
 });
-// delete Rivew
+// delete Review
 app.delete("/myReviews/:id", async (req, res) => {
   try {
     const { id } = req.params;
