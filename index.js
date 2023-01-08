@@ -146,6 +146,22 @@ app.get("/myReviews", async (req, res) => {
     console.log(error.name.bgRed, error.message.bold);
   }
 });
+// delete Rivew
+app.delete("/myReviews/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = { _id: ObjectId(id) };
+    const result = await reviewCollection.deleteOne(query);
+    if (result.deletedCount) {
+      res.send({
+        success: true,
+        message: "Successfully Deleted!",
+      });
+    }
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
 
 app.listen(port, () =>
   console.log(
