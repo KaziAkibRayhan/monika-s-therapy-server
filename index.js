@@ -107,8 +107,45 @@ app.post("/reviews", async (req, res) => {
   }
 });
 
+app.get("/reviews", async (req, res) => {
+  try {
+    let query = {};
+    if (req.query.service_id) {
+      query = {
+        service_id: req.query.service_id,
+      };
+    }
+    const cursor = reviewCollection.find(query);
+    const reviews = await cursor.toArray();
+    res.send({
+      success: true,
+      message: "Successfully got the data",
+      data: reviews,
+    });
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
 
-
+app.get("/myReviews", async (req, res) => {
+  try {
+    let query = {};
+    if (req.query.email) {
+      query = {
+        email: req.query.email,
+      };
+    }
+    const cursor = reviewCollection.find(query);
+    const myReviews = await cursor.toArray();
+    res.send({
+      success: true,
+      message: "Successfully got the data",
+      data: myReviews,
+    });
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
 
 app.listen(port, () =>
   console.log(
