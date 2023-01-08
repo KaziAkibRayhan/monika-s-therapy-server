@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("colors");
 require("dotenv").config();
 const app = express();
@@ -32,6 +32,8 @@ const serviceCollection = client
   .db("monikasTherapy")
   .collection("therapyServices");
 
+const reviewCollection = client.db("monikasTherapy").collection("reviews");
+
 // api end point
 app.get("/", async (req, res) => {
   try {
@@ -45,18 +47,49 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/homeService", async (req, res) => {
-  const cursor = serviceCollection.find({}).limit(3);
-  const homeServices = await cursor.toArray();
+  try {
+    const cursor = serviceCollection.find({}).limit(3);
+    const homeServices = await cursor.toArray();
 
-  res.send({
-    success: true,
-    message: "Successfully got the data",
-    data: homeServices,
-  });
+    res.send({
+      success: true,
+      message: "Successfully got the data",
+      data: homeServices,
+    });
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
 });
 
+app.get("/services", async (req, res) => {
+  try {
+    const cursor = serviceCollection.find({});
+    const services = await cursor.toArray();
 
+    res.send({
+      success: true,
+      message: "Successfully got the data",
+      data: services,
+    });
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
 
+app.get("/services/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = { _id: ObjectId(id) };
+    const service = await serviceCollection.findOne(query);
+    res.send({
+      success: true,
+      message: "Successfully got the data",
+      data: service,
+    });
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
 
 app.listen(port, () =>
   console.log(
