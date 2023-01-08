@@ -91,6 +91,22 @@ app.get("/services/:id", async (req, res) => {
   }
 });
 
+app.post("/reviews", async (req, res) => {
+  try {
+    const review = req.body;
+    const result = await reviewCollection.insertOne(review);
+
+    if (result.insertedId) {
+      res.send({
+        success: true,
+        message: "Successfully data inserted!",
+      });
+    }
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
+
 app.listen(port, () =>
   console.log(
     `Monika's Therapy listening at http://localhost:${port}`.cyan.bold
