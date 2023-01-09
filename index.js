@@ -138,7 +138,7 @@ app.get("/reviews", async (req, res) => {
         service_id: req.query.service_id,
       };
     }
-    const cursor = reviewCollection.find(query);
+    const cursor = reviewCollection.find(query).sort({ _id: -1 });
     const reviews = await cursor.toArray();
     res.send({
       success: true,
@@ -170,6 +170,45 @@ app.get("/myReviews", async (req, res) => {
     console.log(error.name.bgRed, error.message.bold);
   }
 });
+
+//get specific review
+app.get("/myReview/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = { _id: ObjectId(id) };
+    const myReview = await reviewCollection.findOne(query);
+    res.send({
+      success: true,
+      message: "Successfully got the data",
+      data: myReview,
+    });
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
+
+// update review
+app.patch("/myReview/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = { _id: ObjectId(id) };
+    const result = await reviewCollection.updateOne(query, { $set: req.body });
+    if (result.matchedCount) {
+      res.send({
+        success: true,
+        message: "Successfully updated data!",
+      });
+    } else {
+      res.send({
+        success: false,
+        error: "Couldn't update the product",
+      });
+    }
+  } catch (error) {
+    console.log(error.name.bgRed, error.message.bold);
+  }
+});
+
 // delete Review
 app.delete("/myReviews/:id", async (req, res) => {
   try {
