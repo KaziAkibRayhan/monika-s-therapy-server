@@ -3,6 +3,8 @@ const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("colors");
 require("dotenv").config();
+const jwt = require('jsonwebtoken');
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -35,8 +37,8 @@ const serviceCollection = client
 const reviewCollection = client.db("monikasTherapy").collection("reviews");
 
 // api end point
-// Default Route
 
+// Default Route
 app.get("/", async (req, res) => {
   try {
     res.send({
@@ -47,6 +49,7 @@ app.get("/", async (req, res) => {
     console.log(error.name.bgRed, error.message.bold);
   }
 });
+
 
 // only homepage to show 3 data by limit()
 app.get("/homeService", async (req, res) => {
